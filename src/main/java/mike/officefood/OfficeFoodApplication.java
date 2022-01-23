@@ -8,6 +8,7 @@ public class OfficeFoodApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(OfficeFoodApplication.class, args);
+		String test = "test";
 	}
 
 }
