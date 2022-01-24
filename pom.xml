@@ -10,11 +10,12 @@
 	</parent>
 	<groupId>mike.officefood</groupId>
 	<artifactId>officefood</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<name>officefood</name>
 	<description>Project for office food orders</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>8</java.version>
+		<telegram.starter.version>5.6.0</telegram.starter.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -40,6 +41,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots-spring-boot-starter</artifactId>
+			<version>${telegram.starter.version}</version>
 		</dependency>
 	</dependencies>
 
