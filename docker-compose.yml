@@ -9,8 +9,6 @@ services:
     environment:
       BOT_NAME: ${BOT_NAME}
       BOT_TOKEN: ${BOT_TOKEN}
-      #OFFICE_DB_PASSWORD: masterkey
-      #OFFICE_DB_USERNAME: postgres
       OFFICE_DB_PASSWORD: ${OFFICE_DB_PASSWORD}
       OFFICE_DB_USERNAME: ${OFFICE_DB_USERNAME}
     restart: always
@@ -19,8 +17,6 @@ services:
     restart: always
     container_name: db
     environment:
-      #POSTGRES_USER: postgres
-      #POSTGRES_PASSWORD: masterkey
       POSTGRES_USER: ${OFFICE_DB_USERNAME}
       POSTGRES_PASSWORD: ${OFFICE_DB_PASSWORD}
       POSTGRES_DB: "officefood"
