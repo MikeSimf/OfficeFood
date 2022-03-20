@@ -1,5 +1,7 @@
-package mike.officefood.lunch.command;
+package mike.officefood.lunch.command.admin;
 
+import mike.officefood.lunch.command.Command;
+import mike.officefood.lunch.command.CommandWithMessageService;
 import mike.officefood.lunch.command.config.BotCommand;
 import mike.officefood.lunch.repository.entity.LunchTelegramUser;
 import org.springframework.stereotype.Component;
@@ -9,7 +11,7 @@ import java.util.Optional;
 
 @Component
 @BotCommand(name = "/regme")
-public class RegmeCommand extends CommandWithMessageService implements Command{
+public class RegmeCommand extends CommandWithMessageService implements Command {
 
     @Override
     public void execute(Update update) {
@@ -17,7 +19,6 @@ public class RegmeCommand extends CommandWithMessageService implements Command{
         String resultMessage = "";
 
         LunchTelegramUser lunchTelegramUser = lunchTelegramUserService.findByChatId(chatId);
-        System.out.println("aaa"+lunchTelegramUser);
         if (lunchTelegramUser == null) {
             LunchTelegramUser telegramUser = new LunchTelegramUser();
             telegramUser.setActive(true);
