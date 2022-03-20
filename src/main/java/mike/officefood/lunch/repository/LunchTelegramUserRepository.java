@@ -1,7 +1,6 @@
 package mike.officefood.lunch.repository;
 
 import mike.officefood.lunch.repository.entity.LunchTelegramUser;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
