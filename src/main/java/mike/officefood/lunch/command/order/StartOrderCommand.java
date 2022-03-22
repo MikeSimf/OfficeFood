@@ -1,5 +1,7 @@
 package mike.officefood.lunch.command.order;
 
+import mike.officefood.lunch.ContextBuilder;
+import mike.officefood.lunch.OperationContext;
 import mike.officefood.lunch.command.Command;
 import mike.officefood.lunch.command.CommandWithMessageService;
 import mike.officefood.lunch.command.config.BotCommand;
@@ -12,38 +14,23 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@BotCommand(name = "/start_order")
+@BotCommand(name = "/start")
 public class StartOrderCommand extends CommandWithMessageService implements Command {
     @Override
     public void execute(Update update) {
         String chatId = update.getMessage().getChatId().toString();
+        LunchTelegramUser lunchTelegramUser = lunchTelegramUserService.findByChatId(chatId);
+        //TODO: надо бы дать возможность открывать заказ заранее
         Date date = new Date();
 
-        LunchTelegramUser lunchTelegramUser = lunchTelegramUserService.findByChatId(chatId);
-        if (lunchTelegramUser == null) {
-            sendBotMessageService.sendMessage(chatId, "Для старта заказа надо зарегистрироваться");
-            return;
-        }
-        //TODO: надо будет добавить права администрирование
-        if (!lunchTelegramUser.getChatId().equals("363960924")) {
-            sendBotMessageService.sendMessage(chatId,
-                    "У вас нет прав на выполнение данной операции");
-            return;
-        }
+        OperationContext context = new ContextBuilder()
+                .setChatId(chatId)
+                .setUser(lunchTelegramUser)
+                .setChatType(update.getMessage().getChat().getType())
+                .addParam("orderDate", date)
+                .build();
 
-        List<LunchOrder> orderList = lunchOrderService.findAllByDate(date);
-        if (orderList.size() == 0) {
-            LunchOrder order = new LunchOrder();
-            order.setState("START");
-            order.setDate(date);
-            order.setPayer(lunchTelegramUser);
-            lunchOrderService.saveOrder(order);
-        } else {
-            LunchOrder order = orderList.get(0);
-            order.setState("START");
-            lunchOrderService.saveOrder(order);
-        }
-
-        sendBotMessageService.sendMessage(chatId, "Открыт сбор заказа на сегодня");
+        String resultMessage = lunchOrderService.startOrder(context).getResult();
+        sendBotMessageService.sendMessage(chatId, resultMessage);
     }
 }

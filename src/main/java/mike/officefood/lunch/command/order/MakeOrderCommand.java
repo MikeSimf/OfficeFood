@@ -1,5 +1,7 @@
 package mike.officefood.lunch.command.order;
 
+import mike.officefood.lunch.ContextBuilder;
+import mike.officefood.lunch.OperationContext;
 import mike.officefood.lunch.command.Command;
 import mike.officefood.lunch.command.CommandWithMessageService;
 import mike.officefood.lunch.command.config.BotCommand;
@@ -15,55 +17,36 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@BotCommand(name = "/m")
+@BotCommand(name = "/want")
 public class MakeOrderCommand extends CommandWithMessageService implements Command {
     @Override
     public void execute(Update update) {
         String chatId = update.getMessage().getChatId().toString();
-        String[] messages = update.getMessage().getText().trim().split(" ");
-        Integer defaultValue = 1;
-
-        Date date = new Date();
-
         LunchTelegramUser lunchTelegramUser = lunchTelegramUserService.findByChatId(chatId);
-        if (lunchTelegramUser == null) {
-            sendBotMessageService.sendMessage(chatId, "Для старта заказа надо зарегистрироваться");
-            return;
-        }
 
-        LunchOrder order = lunchOrderService.findByDate(date);
-        if (order == null) {
-            sendBotMessageService.sendMessage(chatId, "Прием заказов еще не начался");
-            return;
-        }
+        String[] messages = update.getMessage().getText().trim().split(" ");
+        Integer amount = 1;
+        String menuTag = "";
+        Date orderDate = new Date();
 
-        LunchOrderDetail orderDetail = new LunchOrderDetail();
-        orderDetail.setOrder(order);
-        if (messages.length > 1) {
-            String tag = messages[1];
-            LunchMenu lunchMenu = lunchOrderService.findMenu(tag);
-            if (lunchMenu == null) {
-                sendBotMessageService.sendMessage(chatId, "Такой позиции не найдено");
-                return;
+        if (messages.length > 1) menuTag = messages[1];
+        if (messages.length > 2 && messages[2] != null)
+            try {
+                amount = Integer.parseInt(messages[2]);
+            } catch (Exception e) {
+                amount = 1;
             }
-            orderDetail.setMenu(lunchMenu);
-        } else {
-            sendBotMessageService.sendMessage(chatId, "Не указана позиция");
-            return;
-        }
 
-        if (messages.length > 2) {
-            Integer count = (messages[2] == null) ? defaultValue : Integer.parseInt(messages[2]);
-            orderDetail.setAmount(count);
-            orderDetail.setSum(orderDetail.getMenu().getCost().multiply(BigDecimal.valueOf(count)));
-        } else {
-            orderDetail.setAmount(defaultValue);
-            orderDetail.setSum(orderDetail.getMenu().getCost().multiply(BigDecimal.valueOf(defaultValue)));
-        }
+        OperationContext context = new ContextBuilder()
+                .setChatId(chatId)
+                .setUser(lunchTelegramUser)
+                .setChatType(update.getMessage().getChat().getType())
+                .addParam("orderDate", orderDate)
+                .addParam("menu", menuTag)
+                .addParam("amount", amount)
+                .build();
 
-        lunchOrderService.addDetailOrder(orderDetail);
-
-        sendBotMessageService.sendMessage(chatId, "Добавлена позиция " + orderDetail.getMenu().getName()
-                + " в количестве " + orderDetail.getAmount());
+        String resultMessage = lunchOrderService.makeOrder(context).getResult();
+        sendBotMessageService.sendMessage(chatId, resultMessage);
     }
 }

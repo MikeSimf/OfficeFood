@@ -11,6 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class UnknownCommand extends CommandWithMessageService implements Command {
     @Override
     public void execute(Update update) {
-        sendBotMessageService.sendMessage(update.getMessage().getChatId().toString(), "Я не знаю этой команды:(");
+        sendBotMessageService.sendMessage(update.getMessage().getChatId().toString(), "Я не знаю этой команды:(\nЧтобы посмотреть список команд введите /help");
     }
 }
