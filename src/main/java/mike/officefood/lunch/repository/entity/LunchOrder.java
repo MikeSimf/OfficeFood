@@ -14,12 +14,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "lunch_order")
+@Transactional
 public class LunchOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +36,6 @@ public class LunchOrder {
     @JoinColumn(name = "payer_id")
     private LunchTelegramUser payer;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LunchOrderDetail> details;
-
 }
