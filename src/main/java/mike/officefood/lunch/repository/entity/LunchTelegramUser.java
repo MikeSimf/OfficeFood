@@ -20,4 +20,6 @@ public class LunchTelegramUser {
     private String chatId;
 
     private boolean active;
+
+    private LunchRole role;
 }
