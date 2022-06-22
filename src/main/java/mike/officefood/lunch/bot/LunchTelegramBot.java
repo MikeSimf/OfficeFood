@@ -35,8 +35,14 @@ public class LunchTelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String message = update.getMessage().getText().trim();
+        if (update.hasMessage() && update.getMessage().hasText() || update.hasCallbackQuery() && update.getCallbackQuery().getMessage().hasText()) {
+            String message = "";
+            if (update.hasCallbackQuery()) {
+                message = update.getCallbackQuery().getMessage().getText().trim();
+            } else {
+                message = update.getMessage().getText().trim();
+            }
+            System.out.println("TOTAL MESSAGE = "+message);
 
             if (message.startsWith(COMMAND_PREFIX)) {
                 String commandIdentifier = message.split(" ")[0].toLowerCase();
